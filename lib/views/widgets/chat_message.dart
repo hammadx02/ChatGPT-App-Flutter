@@ -1,14 +1,17 @@
-import 'package:chatbot_app/model/model.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import '../../model/model.dart';
 
 class ChatMessageWidget extends StatelessWidget {
   final bool loading;
-  const ChatMessageWidget(
-      {super.key,
-      this.loading = false,
-      required this.text,
-      required this.chatMessageType});
+
+  const ChatMessageWidget({
+    super.key,
+    required this.text,
+    required this.chatMessageType,
+    this.loading = false,
+  });
+
   final String text;
   final ChatMessageType chatMessageType;
 
@@ -25,13 +28,17 @@ class ChatMessageWidget extends StatelessWidget {
                   margin: const EdgeInsets.only(right: 16, top: 55),
                   child: CircleAvatar(
                     backgroundColor: const Color.fromRGBO(16, 163, 127, 1),
-                    child: Image.asset('assets/chatgpt_icon.png'),
+                    child: Image.asset(
+                      'assets/chatgpt-icon.png',
+                    ),
                   ),
                 )
               : Container(
-                  margin: const EdgeInsets.only(right: 16),
+                  margin: const EdgeInsets.only(right: 16.0),
                   child: const CircleAvatar(
-                    child: Icon(Icons.person),
+                    child: Icon(
+                      Icons.person,
+                    ),
                   ),
                 ),
           Expanded(
@@ -40,11 +47,9 @@ class ChatMessageWidget extends StatelessWidget {
               children: <Widget>[
                 if (!loading)
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8.0),
                     decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8),
-                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     ),
                     child: Text(
                       text,
@@ -61,14 +66,14 @@ class ChatMessageWidget extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(top: 55),
                       child: Text(
-                        'Loading. . .',
+                        'Loading ...',
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                     ),
-                  )
+                  ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

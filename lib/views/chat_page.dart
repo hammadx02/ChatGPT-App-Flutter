@@ -1,11 +1,11 @@
-import 'package:chatbot_app/controller/generate_response.dart';
-import 'package:chatbot_app/widgets/chat_message.dart';
+import 'package:chatbot_app/views/widgets/chat_message.dart';
 import 'package:flutter/material.dart';
 
+import '../controller/generate_response.dart';
 import '../model/model.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({super.key});
+  const ChatPage({Key? key}) : super(key: key);
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -13,10 +13,15 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final _textController = TextEditingController();
+
   final _scrollController = ScrollController();
-  late bool isLoading;
 
   final List<ChatMessage> _messages = [];
+
+  late bool isLoading;
+
+  TextEditingController messageTextController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -25,41 +30,35 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor:
-              Theme.of(context).colorScheme.onBackground.withOpacity(0.1),
-          centerTitle: true,
-          automaticallyImplyLeading: false,
-          elevation: 0,
-          toolbarHeight: 70,
-          title: const Text(
-            'ChatGpt',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.6,
-              color: Colors.black45,
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        toolbarHeight: 70,
+        elevation: 2,
+        title: const Text(
+          "ChatGPT",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.6,
           ),
         ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                child: _buildList(),
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: _buildList(),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  _buildInput(),
+                  _buildSubmit(),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    _buildInput(),
-                    _buildSubmit(),
-                  ],
-                ),
-              )
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -67,9 +66,12 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget _buildSubmit() {
     return Visibility(
+      visible: !isLoading,
       child: IconButton(
-        onPressed: () {
-          //display user
+        icon: const Icon(
+          Icons.send_rounded,
+        ),
+        onPressed: () async {
           setState(
             () {
               _messages.add(
@@ -83,32 +85,24 @@ class _ChatPageState extends State<ChatPage> {
           );
           final input = _textController.text;
           _textController.clear();
-          Future.delayed(Duration(milliseconds: 50))
-              .then((value) => _scrollDown);
-
-          //call chatbot api
-
-          generateResponse(input).then(
-            (value) {
-              setState(
-                () {
-                  isLoading = false;
-                  _messages.add(
-                    ChatMessage(
-                        text: value, chatMessageType: ChatMessageType.bot),
-                  );
-                },
+          Future.delayed(const Duration(milliseconds: 50))
+              .then((_) => _scrollDown());
+          generateResponse(input).then((value) {
+            setState(() {
+              isLoading = false;
+              _messages.add(
+                ChatMessage(
+                  text: value,
+                  chatMessageType: ChatMessageType.bot,
+                ),
               );
-            },
-          );
+            });
+          });
           _textController.clear();
-          Future.delayed(Duration(milliseconds: 50)).then(
-            (value) => _scrollDown(),
+          Future.delayed(const Duration(milliseconds: 50)).then(
+            (_) => _scrollDown(),
           );
-
-          //display chatbot response
         },
-        icon: const Icon(Icons.send_rounded),
       ),
     );
   }
@@ -119,15 +113,14 @@ class _ChatPageState extends State<ChatPage> {
         borderRadius: BorderRadius.circular(90),
         child: TextField(
           enabled: !isLoading,
-          controller: _textController,
           textCapitalization: TextCapitalization.sentences,
+          controller: _textController,
           decoration: InputDecoration(
             filled: true,
             fillColor:
                 Theme.of(context).colorScheme.onBackground.withOpacity(0.1),
             border: InputBorder.none,
-            hintText:
-                isLoading ? 'Loading . . .' : 'Write something here . . .',
+            hintText: isLoading ? 'Loading ...' : 'Write something here . . .',
           ),
         ),
       ),
@@ -142,19 +135,25 @@ class _ChatPageState extends State<ChatPage> {
         try {
           var message = _messages[index];
           return ChatMessageWidget(
-              text: message.text, chatMessageType: message.chatMessageType);
+            text: message.text,
+            chatMessageType: message.chatMessageType,
+          );
         } catch (e) {
           return const ChatMessageWidget(
-              loading: true,
-              text: 'Loading. . .',
-              chatMessageType: ChatMessageType.bot);
+            text: "Loading ...",
+            loading: true,
+            chatMessageType: ChatMessageType.bot,
+          );
         }
       },
     );
   }
 
   void _scrollDown() {
-    _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
   }
 }
