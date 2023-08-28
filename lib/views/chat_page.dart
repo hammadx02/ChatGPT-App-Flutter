@@ -22,7 +22,20 @@ class _ChatPageState extends State<ChatPage> {
             style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.6),
           ),
         ),
+        body: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: _buildList(),
+              ),
+            ],
+          ),
+        ),
       ),
     );
+  }
+
+  ListView _buildList() {
+    return ListView.builder(itemBuilder: (context, index) {});
   }
 }
