@@ -13,10 +13,10 @@
 //       "Authorization": "Bearer $apiKey"
 //     },
 //     body: json.encode({
-//       "model": "text-davinci-003",
+//       "model": "gpt-3.5-turbo-0125",
 //       "prompt": prompt,
 //       'temperature': 0,
-//       'max_tokens': 2000,
+//       'max_tokens': 4096,
 //       'top_p': 1,
 //       'frequency_penalty': 0.0,
 //       'presence_penalty': 0.0,
@@ -41,7 +41,8 @@ import '../constant/api_key.dart';
 Future<String> generateResponse(String prompt) async {
   const apiKey = apikey;
 
-  var url = Uri.https("api.openai.com", "/v1/completions");
+  // Use the correct endpoint for chat completions
+  var url = Uri.https("api.openai.com", "/v1/chat/completions");
 
   try {
     final response = await http.post(
@@ -51,29 +52,32 @@ Future<String> generateResponse(String prompt) async {
         'Authorization': 'Bearer $apiKey',
       },
       body: json.encode({
-        'model': 'text-davinci-003',
-        'prompt': prompt,
+        'model': 'gpt-3.5-turbo-16k',  // Ensure this is the correct model
+        'messages': [
+          {'role': 'user', 'content': prompt},
+        ],
         'temperature': 0,
-        'max_tokens': 2000,
+        'max_tokens': 4096,
         'top_p': 1,
         'frequency_penalty': 0.0,
         'presence_penalty': 0.0,
       }),
     );
 
-    // Check if the request was successful
     if (response.statusCode == 200) {
       Map<String, dynamic> newResponse = jsonDecode(response.body);
-      return newResponse['choices'][0]['text'];
+      // Adjust based on the response structure
+      return newResponse['choices'][0]['message']['content'];
     } else {
-      // Log the full response body for better error handling
-      print('Error: ${response.statusCode}');
-      print('Response body: ${response.body}');
-      return 'Error ${response.statusCode}: ${response.body}';
+      // Return a more detailed error message
+      return {
+        'error': 'Failed to fetch data',
+        'statusCode': response.statusCode,
+        'response': response.body,
+      }.toString();
     }
   } catch (e) {
-    // Handle any other exceptions
-    print('Exception caught: $e');
+    // Handle exceptions
     return 'An error occurred: $e';
   }
 }
