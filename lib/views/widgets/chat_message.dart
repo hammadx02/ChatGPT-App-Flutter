@@ -63,7 +63,7 @@ class ChatMessageWidget extends StatelessWidget {
                   Shimmer.fromColors(
                     baseColor: Theme.of(context)
                         .colorScheme
-                        .onBackground
+                        .onSurface
                         .withOpacity(0.5),
                     highlightColor: Colors.yellow,
                     child: Padding(
