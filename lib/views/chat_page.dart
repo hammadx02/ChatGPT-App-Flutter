@@ -5,7 +5,7 @@ import '../controller/generate_response.dart';
 import '../model/model.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({Key? key}) : super(key: key);
+  const ChatPage({super.key});
 
   @override
   State<ChatPage> createState() => _ChatPageState();
