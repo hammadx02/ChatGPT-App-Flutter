@@ -117,8 +117,7 @@ class _ChatPageState extends State<ChatPage> {
           controller: _textController,
           decoration: InputDecoration(
             filled: true,
-            fillColor:
-                Theme.of(context).colorScheme.onBackground.withOpacity(0.1),
+            fillColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
             border: InputBorder.none,
             hintText: isLoading ? 'Loading ...' : 'Write something here . . .',
           ),
