@@ -13,7 +13,7 @@ Future<String> generateResponse(String prompt) async {
       "Authorization": "Bearer $apiKey"
     },
     body: json.encode({
-      "model": "gpt-4o",
+      "model": "gpt-3.5-turbo-0125",
       "prompt": prompt,
       'temperature': 0,
       'max_tokens': 4096,
